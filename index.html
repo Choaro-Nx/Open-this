@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Will You Be My Valentine? ❤️</title>
+
   <style>
     body {
       margin: 0;
@@ -15,7 +16,9 @@
       font-family: 'Segoe UI', sans-serif;
       color: #fff;
       text-align: center;
+      overflow: hidden;
     }
+
     .card {
       background: rgba(255, 255, 255, 0.15);
       padding: 2.5rem;
@@ -24,15 +27,17 @@
       max-width: 420px;
       width: 90%;
       backdrop-filter: blur(8px);
+      z-index: 2;
     }
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 1rem;
+
+    img.photo {
+      width: 100%;
+      max-width: 250px;
+      border-radius: 15px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
-    p {
-      font-size: 1.1rem;
-      margin-bottom: 2rem;
-    }
+
     button {
       border: none;
       padding: 0.8rem 1.6rem;
@@ -40,118 +45,138 @@
       font-size: 1rem;
       cursor: pointer;
       margin: 0.5rem;
-      transition: transform 0.2s ease, background 0.2s ease;
+      transition: transform 0.2s ease;
     }
+
     #yesBtn {
       background: #ff4d6d;
       color: white;
     }
+
     #noBtn {
-      background: #ffffff;
+      background: white;
       color: #ff4d6d;
-      position: relative;
     }
+
     button:hover {
       transform: scale(1.05);
     }
-  /* Floating hearts */
-.heart {
-  position: fixed;
-  bottom: -20px;
-  font-size: 20px;
-  animation: floatUp 6s linear forwards;
-  pointer-events: none;
-}
 
-@keyframes floatUp {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-110vh) scale(1.5);
-    opacity: 0;
-  }
-}
+    /* Floating hearts */
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      animation: floatUp 6s linear forwards;
+      pointer-events: none;
+    }
 
-/* Confetti */
-.confetti {
-  position: fixed;
-  top: -10px;
-  width: 10px;
-  height: 10px;
-  opacity: 0.9;
-  animation: fall 3s linear forwards;
-  pointer-events: none;
-}
+    @keyframes floatUp {
+      to {
+        transform: translateY(-110vh);
+        opacity: 0;
+      }
+    }
 
-@keyframes fall {
-  to {
-    transform: translateY(110vh) rotate(360deg);
-    opacity: 0;
-  }
-}
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      top: -10px;
+      width: 10px;
+      height: 10px;
+      animation: fall 3s linear forwards;
+      pointer-events: none;
+    }
 
-</style>
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
+
 <body>
+
   <div class="card">
+    <img src="us.jpg" class="photo" alt="Us" />
+
     <h1>Hey ❤️</h1>
     <p>I have something important to ask you…</p>
     <h2>Will you be my Valentine? 💘</h2>
-    <div>
-      <button id="yesBtn">Yes 😍</button>
-      <button id="noBtn">No 🙈</button>
-    </div>
-    <p id="response"></p>
+
+    <button id="yesBtn">Yes 😍</button>
+    <button id="noBtn">No 🙈</button>
   </div>
 
+  <!-- Background music -->
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
   <script>
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const response = document.getElementById('response');
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
 
-    yesBtn.addEventListener('click', () => {
-  // Play music if added
-  const music = document.getElementById('bgMusic');
-  if (music) music.play();
+    yesBtn.addEventListener("click", () => {
+      document.getElementById("bgMusic").play();
 
-  // Hearts
-  for (let i = 0; i < 20; i++) createHeart();
+      for (let i = 0; i < 25; i++) createHeart();
+      for (let i = 0; i < 40; i++) createConfetti();
 
-  // Confetti
-  for (let i = 0; i < 40; i++) createConfetti();
-
-  setTimeout(() => {
-    window.location.href = "yes.html";
-  }, 1500);
-});
-
-    noBtn.addEventListener('mouseover', () => {
-      const x = Math.random() * 200 - 100;
-      const y = Math.random() * 200 - 100;
-      noBtn.style.transform = `translate(${x}px, ${y}px)`;
+      setTimeout(() => {
+        window.location.href = "yes.html";
+      }, 1500);
     });
-  function createHeart() {
-  const heart = document.createElement('div');
-  heart.className = 'heart';
-  heart.innerText = '❤️';
-  heart.style.left = Math.random() * 100 + 'vw';
-  heart.style.fontSize = 16 + Math.random() * 20 + 'px';
-  document.body.appendChild(heart);
-  setTimeout(() => heart.remove(), 6000);
-}
 
-function createConfetti() {
-  const confetti = document.createElement('div');
-  confetti.className = 'confetti';
-  confetti.style.left = Math.random() * 100 + 'vw';
-  confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 70%)`;
-  confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-  document.body.appendChild(confetti);
-  setTimeout(() => confetti.remove(), 3000);
-}
+    noBtn.addEventListener("click", () => {
+      for (let i = 0; i < 30; i++) explodeHeart(noBtn);
+      noBtn.style.display = "none";
+    });
 
-</script>
+    function createHeart() {
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.innerText = "❤️";
+      h.style.left = Math.random() * 100 + "vw";
+      h.style.fontSize = 16 + Math.random() * 20 + "px";
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 6000);
+    }
+
+    function createConfetti() {
+      const c = document.createElement("div");
+      c.className = "confetti";
+      c.style.left = Math.random() * 100 + "vw";
+      c.style.backgroundColor = `hsl(${Math.random() * 360},80%,70%)`;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3000);
+    }
+
+    function explodeHeart(btn) {
+      const rect = btn.getBoundingClientRect();
+      const h = document.createElement("div");
+      h.innerText = "💖";
+      h.style.position = "fixed";
+      h.style.left = rect.left + rect.width / 2 + "px";
+      h.style.top = rect.top + "px";
+      h.style.fontSize = "20px";
+      document.body.appendChild(h);
+
+      const x = Math.random() * 300 - 150;
+      const y = Math.random() * -300;
+
+      h.animate(
+        [
+          { transform: "translate(0,0)", opacity: 1 },
+          { transform: `translate(${x}px, ${y}px)`, opacity: 0 }
+        ],
+        { duration: 2000 }
+      );
+
+      setTimeout(() => h.remove(), 2000);
+    }
+  </script>
+
 </body>
 </html>
